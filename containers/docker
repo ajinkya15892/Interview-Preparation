@@ -1,0 +1,106 @@
+// commands can start with # or $ 
+Q : What is a Dockerfile?
+Ans : A Dockerfile is a text file containing instructions to build a Docker image layer by layer.
+
+======================================================================================================================
+
+RUN,ENTRYPOINT,CMD,COPY,ADD all are directives.
+
+======================================================================================================================
+
+Docker image basic structure which covering all ENTRYPOINT & CMD
+
+Dockerfile contain : 
+
+FROM alpine
+CMD ["echo", "Hello World!"]
+
+we are creating image withabove example : 
+
+#docker build . -t custom-image:v1
+
+confirm image with command docker images : 
+#docker images 
+o/p : 
+
+REPOSITORY                                   TAG         IMAGE ID      CREATED        SIZE
+localhost/custom-image                       v1          ad549af24f18  4 seconds ago  8.73 MB
+
+#docker run -it localhost/custom-image:v1 
+o/p: Hello World!
+
+now CMD argument we can override , let test that : 
+#docker run -it localhost/custom-image:v1 echo "Hello AB!"
+o/p: Hello AB!
+
+its clearly saying that we can override CMD.
+
+lets move forward with ENTRYPOINT 
+
+FROM alpine
+ENTRYPOINT ["echo", "Hello World!"]
+
+#docker build . -t custom-image:v2
+#docker images 
+REPOSITORY                                   TAG         IMAGE ID      CREATED        SIZE
+localhost/custom-image                       v2          bcd35fdd7ff7  6 minutes ago  8.73 MB
+
+#docker run -it localhost/custom-image:v2 echo "Hello AB!"
+o/p: Hello World! echo Hello AB!
+
+can you append value yes you can : 
+
+docker run -it localhost/custom-image:v2 "Hello AB!"
+o/p: Hello World! Hello AB!
+
+======================================================================================================================
+
+lets understand : ADD & COPY in Docker. 
+
+FROM alpine
+COPY temp.txt /copy.txt
+RUN  cat /copy.txt
+ADD https://download.java.net/java/GA/jdk25/bd75d5f9689641da8e1daabeccb5528b/36/GPL/openjdk-25_linux-x64_bin.tar.gz /
+CMD ["/bin/bash"]
+
+COPY will work on local operation like copying files from host machines to container 
+but ADD command with download from external resources and will add in container. 
+
+Note : ADD is not recommendation bcoz if in future URL is changes by provider then it will create problem or typo mistake will cause failure issue.
+
+======================================================================================================================
+
+
+
+CMD default will print Hello World! --> if we execute 
+
+FROM rockylinux:9
+
+RUN dnf clean all && \
+    dnf install -y \
+        httpd \
+        bind-utils \
+        lsof \
+        net-tools \
+        telnet
+
+EXPOSE 80
+
+ENTRYPOINT ["/usr/sbin/httpd"]
+CMD ["-DFOREGROUND"]
+
+EXPOSE command is getting used to expose port. 
+
+#docker run -it -p 8080:80 rockylinux-httpd:v1 
+
+
+Explaination : 
+
+
+
+
+
+
+======================================================================================================================
+
+
